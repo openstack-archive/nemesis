@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = nemesis
+
+[report]
+ignore_errors = True
