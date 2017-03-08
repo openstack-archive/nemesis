@@ -1,5 +1,5 @@
 ============================================
- python-nemesis Release Notes
+ python_nemesis Release Notes
 ============================================
 
 .. toctree::

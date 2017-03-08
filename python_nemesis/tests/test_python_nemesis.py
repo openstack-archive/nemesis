@@ -13,16 +13,16 @@
 # under the License.
 
 """
-test_python-nemesis
+test_python_nemesis
 ----------------------------------
 
-Tests for `python-nemesis` module.
+Tests for `python_nemesis` module.
 """
 
-from python-nemesis.tests import base
+from python_nemesis.tests import base
 
 
-class TestPython-nemesis(base.TestCase):
+class TestPython_nemesis(base.TestCase):
 
     def test_something(self):
         pass

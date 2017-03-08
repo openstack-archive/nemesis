@@ -16,4 +16,4 @@ import pbr.version
 
 
 __version__ = pbr.version.VersionInfo(
-    'python-nemesis').version_string()
+    'python_nemesis').version_string()

@@ -2,7 +2,7 @@
 nemesis
 ===============================
 
-A malware scanning and file intelligence API for the OpenStack ecosystem.
+A file intelligence and malware scanning API for the OpenStack ecosystem.
 
 Please fill here a long description which must be at least 3 lines wrapped on
 80 cols, so that distribution package maintainers can use it in their packages.

@@ -4,4 +4,4 @@ Usage
 
 To use nemesis in a project::
 
-    import python-nemesis
+    import python_nemesis
