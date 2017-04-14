@@ -16,7 +16,7 @@ from oslo_config import cfg
 from python_nemesis.config import collect_sqlalchemy_opts
 from python_nemesis.config import register_opts
 from python_nemesis.extensions import db
-# from python_nemesis.extensions import log
+from python_nemesis.extensions import log
 
 
 def configure_blueprints(app, blueprints):
@@ -63,7 +63,7 @@ def configure_extensions(app):
     :type app: :py:class:`flask.Flask`
     """
     db.init_app(app)
-    # log.init_app(app)
+    log.init_app(app)
 
 
 def create_app(app_name=None, blueprints=None):
@@ -82,6 +82,11 @@ def create_app(app_name=None, blueprints=None):
 
     configure_app(app)
     configure_extensions(app)
+
+    # Here we register the application blueprints.
+    from python_nemesis.api.v1 import V1_API
+    blueprints = [V1_API]
+    configure_blueprints(app, blueprints)
 
     return app
 
