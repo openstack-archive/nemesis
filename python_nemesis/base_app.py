@@ -16,6 +16,7 @@ from oslo_config import cfg
 from python_nemesis.config import collect_sqlalchemy_opts
 from python_nemesis.config import register_opts
 from python_nemesis.extensions import db
+from python_nemesis.extensions import keystone
 from python_nemesis.extensions import log
 
 
@@ -64,6 +65,7 @@ def configure_extensions(app):
     """
     db.init_app(app)
     log.init_app(app)
+    keystone.init_app(app)
 
 
 def create_app(app_name=None, blueprints=None):
