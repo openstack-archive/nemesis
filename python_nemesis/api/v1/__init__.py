@@ -15,6 +15,8 @@
 from flask import Blueprint
 from python_nemesis.exceptions import general_handler
 from python_nemesis.exceptions import NemesisException
+from python_nemesis.extensions import db
+from python_nemesis.db.models import FileLookupRequest, Files
 
 
 V1_API = Blueprint('v1_api', __name__)
