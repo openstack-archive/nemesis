@@ -1,15 +1,15 @@
 [DEFAULT]
 
 [keystone_authtoken]
-identity_uri = 
-auth_uri = 
-admin_tenant_name = 
-admin_user = 
-admin_password = 
-auth_version = 
-auth_protocol = 
+identity_uri =
+auth_uri =
+admin_tenant_name =
+admin_user =
+admin_password =
+auth_version =
+auth_protocol =
 delay_auth_decision = True
 
 [sqlalchemy]
-database_uri = sqlite:////tmp/nemesis.db 
+database_uri = sqlite:////tmp/nemesis.db
 echo = true
