@@ -13,4 +13,3 @@ delay_auth_decision = True
 [sqlalchemy]
 database_uri = sqlite:////tmp/nemesis.db 
 echo = true
-
