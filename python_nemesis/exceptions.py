@@ -38,10 +38,11 @@ class NemesisException(Exception):
     title = "Internal Server Error"
     message = ""
 
-    def __init__(self, title, message, status_code=None, payload=None):
+    def __init__(self, message, title=None, status_code=None, payload=None):
         Exception.__init__(self)
-        self.title = title
         self.message = message
+        if title:
+            self.title = title
         if status_code is not None:
             self.status_code = status_code
 
@@ -53,3 +54,9 @@ class NemesisException(Exception):
         rv['title'] = self.title
         rv['message'] = self.message
         return rv
+
+
+class NotFoundException(NemesisException):
+    status_code = 404
+    title = "Not Found"
+    message = ""

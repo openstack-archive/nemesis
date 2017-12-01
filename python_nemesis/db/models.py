@@ -27,7 +27,20 @@ class Files(db.Model):
     status = db.Column(db.String(20), nullable=False)
     last_updated = db.Column(db.DateTime, nullable=False)
     first_seen = db.Column(db.DateTime, nullable=False)
-    role_function = db.relationship("FileLookupRequest")
+    file_lookup = db.relationship("FileLookupRequest")
+
+    def to_dict(self):
+        return {"file_id": self.file_id,
+                "sha512": self.sha512_hash,
+                "sha256": self.sha256_hash,
+                "sha1": self.sha1_hash,
+                "md5": self.md5_hash,
+                "crc32": self.crc32,
+                "size": self.size,
+                "mime_type": self.mime_type,
+                "status": self.status,
+                "last_updated": self.last_updated,
+                "first_seen": self.first_seen}
 
 
 class FileLookupRequest(db.Model):
