@@ -12,14 +12,24 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import datetime
 from flask import Blueprint
 from flask import jsonify
+from flask import request
+from flask_keystone import current_user
+import os
 from python_nemesis.db.utilities import add_request
+from python_nemesis.db.utilities import create_new_file
+from python_nemesis.db.utilities import get_file_by_sha512_hash
 from python_nemesis.db.utilities import search_by_hash
 from python_nemesis.exceptions import general_handler
 from python_nemesis.exceptions import NemesisException
 from python_nemesis.exceptions import NotFoundException
+from python_nemesis.extensions import db
 from python_nemesis.extensions import log
+from python_nemesis.file_hasher import get_all_hashes
+import uuid
+from werkzeug.utils import secure_filename
 
 
 V1_API = Blueprint('v1_api', __name__)
@@ -58,4 +68,43 @@ def lookup_hash(req_hash):
 
 @V1_API.route('/v1/file', methods=['POST'])
 def post_file():
-    return ""
+    filename = secure_filename(str(uuid.uuid4()))
+    filename = '/tmp/%s' % filename
+    file = request.files['file']
+
+    if 'Content-Range' in request.headers:
+        # extract starting byte from Content-Range header string
+        range_str = request.headers['Content-Range']
+        start_bytes = int(range_str.split(' ')[1].split('-')[0])
+
+        # append chunk to the file on disk, or create new
+        with open(filename, 'a') as f:
+            f.seek(start_bytes)
+            f.write(file.stream.read())
+
+    else:
+        # this is not a chunked request, so just save the whole file
+        file.save(filename)
+
+    file_hashes = get_all_hashes(filename)
+    current_file = get_file_by_sha512_hash(file_hashes['sha512'])
+    file_size = os.path.getsize(filename)
+
+    if current_file:
+        file_id = current_file.file_id
+        current_file.last_updated = datetime.datetime.now()
+        current_file.status = 'analysing'
+        db.session.commit()
+        file_dict = current_file.to_dict()
+
+    else:
+        file = create_new_file(file_hashes['md5'],
+                               file_hashes['sha1'],
+                               file_hashes['sha256'],
+                               file_hashes['sha512'],
+                               file_size,
+                               current_user.user_id)
+        file_id = file.file_id
+        file_dict = file.to_dict()
+
+    return jsonify(file_dict)
