@@ -20,7 +20,6 @@ class Files(db.Model):
     sha256_hash = db.Column(db.UnicodeText(), nullable=True, index=True)
     sha1_hash = db.Column(db.UnicodeText(), nullable=True, index=True)
     md5_hash = db.Column(db.UnicodeText(), nullable=True, index=True)
-    crc32 = db.Column(db.UnicodeText(), nullable=True, index=True)
     size = db.Column(db.Float(), nullable=True)
     mime_type = db.Column(db.String(40), nullable=True)
     submitted_by = db.Column(db.String(120), nullable=False, index=True)
@@ -35,7 +34,6 @@ class Files(db.Model):
                 "sha256": self.sha256_hash,
                 "sha1": self.sha1_hash,
                 "md5": self.md5_hash,
-                "crc32": self.crc32,
                 "size": self.size,
                 "mime_type": self.mime_type,
                 "status": self.status,

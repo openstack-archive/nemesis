@@ -36,7 +36,6 @@ def upgrade():
                     sa.Column('sha256_hash', sa.TEXT(), nullable=True),
                     sa.Column('sha1_hash', sa.TEXT(), nullable=True),
                     sa.Column('md5_hash', sa.TEXT(), nullable=True),
-                    sa.Column('crc32', sa.TEXT(), nullable=True),
                     sa.Column('size', sa.FLOAT(), nullable=True),
                     sa.Column('mime_type', sa.VARCHAR(length=40),
                               nullable=True),
