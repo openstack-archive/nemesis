@@ -1,0 +1,8 @@
+Code-Review+2: Robert Putt <robert.putt@rackspace.co.uk>
+Workflow+1: Robert Putt <robert.putt@rackspace.co.uk>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Sat, 02 Dec 2017 20:41:57 +0000
+Reviewed-on: https://review.openstack.org/524924
+Project: openstack/nemesis
+Branch: refs/heads/master
