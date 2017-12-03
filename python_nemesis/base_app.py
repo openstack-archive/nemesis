@@ -13,6 +13,7 @@
 from flask import Flask
 import os
 from oslo_config import cfg
+import oslo_messaging
 from python_nemesis.config import collect_sqlalchemy_opts
 from python_nemesis.config import register_opts
 from python_nemesis.extensions import db
@@ -68,6 +69,15 @@ def configure_extensions(app):
     keystone.init_app(app)
 
 
+def configure_notifier(app):
+    transport = oslo_messaging.get_notification_transport(app.config['cfg'])
+    topics = ['nemesis_notifications']
+    app.config["notifier"] = oslo_messaging.Notifier(transport,
+                                                     'nemesis.api',
+                                                     driver='messagingv2',
+                                                     topics=topics)
+
+
 def create_app(app_name=None, blueprints=None):
     """Create the flask app.
 
@@ -84,6 +94,7 @@ def create_app(app_name=None, blueprints=None):
 
     configure_app(app)
     configure_extensions(app)
+    configure_notifier(app)
 
     # Here we register the application blueprints.
     from python_nemesis.api.v1 import V1_API
