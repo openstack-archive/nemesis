@@ -35,6 +35,18 @@ IDENTITY_OPTS = [
     cfg.StrOpt('password')
 ]
 
+SWIFT_OPT_GRP = cfg.OptGroup(name='swift')
+SWIFT_OPTS = [
+    cfg.StrOpt('user'),
+    cfg.StrOpt('password'),
+    cfg.StrOpt('domain'),
+    cfg.StrOpt('project'),
+    cfg.IntOpt('auth_version'),
+    cfg.StrOpt('auth_uri'),
+    cfg.StrOpt('region'),
+    cfg.StrOpt('container')
+]
+
 
 def register_opts(conf, config_file):
     '''Register Oslo Configuration Options from a provided config file.
@@ -49,6 +61,8 @@ def register_opts(conf, config_file):
     conf.register_opts(SQLALCHEMY_OPTS, SQLALCHEMY_OPT_GRP)
     conf.register_group(IDENTITY_OPT_GRP)
     conf.register_opts(IDENTITY_OPTS, IDENTITY_OPT_GRP)
+    conf.register_group(SWIFT_OPT_GRP)
+    conf.register_opts(SWIFT_OPTS, SWIFT_OPT_GRP)
 
 
 def collect_sqlalchemy_opts(app, conf):

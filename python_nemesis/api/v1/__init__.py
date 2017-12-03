@@ -28,6 +28,7 @@ from python_nemesis.exceptions import NotFoundException
 from python_nemesis.extensions import db
 from python_nemesis.extensions import log
 from python_nemesis.file_hasher import get_all_hashes
+from python_nemesis.swift import upload_to_swift
 import uuid
 from werkzeug.utils import secure_filename
 
@@ -94,6 +95,7 @@ def post_file():
         current_file.last_updated = datetime.datetime.now()
         current_file.status = 'analysing'
         db.session.commit()
+        file_id = current_file.file_id
         file_dict = current_file.to_dict()
 
     else:
@@ -103,6 +105,11 @@ def post_file():
                                file_hashes['sha512'],
                                file_size,
                                current_user.user_id)
+        file_id = file.file_id
         file_dict = file.to_dict()
+
+    # Upload to swift and remove the local temp file.
+    upload_to_swift(filename, file_id)
+    os.remove(filename)
 
     return jsonify(file_dict)
