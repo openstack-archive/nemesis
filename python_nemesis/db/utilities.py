@@ -70,3 +70,22 @@ def create_new_file(md5_hash, sha1_hash, sha256_hash, sha512_hash,
     db.session.add(file)
     db.session.commit()
     return file
+
+
+def create_or_renew_by_hash(hashes, file_size):
+    current_file = get_file_by_sha512_hash(hashes['sha512'])
+
+    if current_file:
+        current_file.last_updated = datetime.datetime.now()
+        current_file.status = 'analysing'
+        db.session.commit()
+        return current_file
+
+    else:
+        file = create_new_file(hashes['md5'],
+                               hashes['sha1'],
+                               hashes['sha256'],
+                               hashes['sha512'],
+                               file_size,
+                               current_user.user_id)
+        return file
