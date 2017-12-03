@@ -33,8 +33,7 @@ def add_request(lookup_hash, result, file_id=None):
 
 def search_by_hash(lookup_hash):
     results = db.session.query(Files). \
-        filter(or_(Files.file_id == lookup_hash,
-                   Files.sha512_hash == lookup_hash,
+        filter(or_(Files.sha512_hash == lookup_hash,
                    Files.sha256_hash == lookup_hash,
                    Files.sha1_hash == lookup_hash,
                    Files.md5_hash == lookup_hash))
