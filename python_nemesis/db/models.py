@@ -29,8 +29,7 @@ class Files(db.Model):
     file_lookup = db.relationship("FileLookupRequest")
 
     def to_dict(self):
-        return {"file_id": self.file_id,
-                "sha512": self.sha512_hash,
+        return {"sha512": self.sha512_hash,
                 "sha256": self.sha256_hash,
                 "sha1": self.sha1_hash,
                 "md5": self.md5_hash,
