@@ -60,3 +60,9 @@ class NotFoundException(NemesisException):
     status_code = 404
     title = "Not Found"
     message = ""
+
+
+class BadRequestException(NemesisException):
+    status_code = 400
+    title = "Bad Request"
+    message = ""
