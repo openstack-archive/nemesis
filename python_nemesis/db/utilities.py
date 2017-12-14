@@ -56,9 +56,10 @@ def get_file_by_sha512_hash(lookup_hash):
 
 
 def create_new_file(md5_hash, sha1_hash, sha256_hash, sha512_hash,
-                    size, submitter):
+                    size, file_type, submitter):
     now = datetime.datetime.now()
     file = Files(size=size,
+                 mime_type=file_type,
                  md5_hash=md5_hash,
                  sha1_hash=sha1_hash,
                  sha256_hash=sha256_hash,
@@ -72,7 +73,7 @@ def create_new_file(md5_hash, sha1_hash, sha256_hash, sha512_hash,
     return file
 
 
-def create_or_renew_by_hash(hashes, file_size):
+def create_or_renew_by_hash(hashes, file_size, file_type=None):
     current_file = get_file_by_sha512_hash(hashes['sha512'])
 
     if current_file:
@@ -87,5 +88,6 @@ def create_or_renew_by_hash(hashes, file_size):
                                hashes['sha256'],
                                hashes['sha512'],
                                file_size,
+                               file_type,
                                current_user.user_id)
         return file
