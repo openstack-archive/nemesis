@@ -15,10 +15,13 @@
 from flask import Blueprint
 from flask import jsonify
 from flask import request
+import magic
 import os
 from python_nemesis.db.utilities import add_request
 from python_nemesis.db.utilities import create_or_renew_by_hash
+from python_nemesis.db.utilities import get_file_by_sha512_hash
 from python_nemesis.db.utilities import search_by_hash
+from python_nemesis.exceptions import BadRequestException
 from python_nemesis.exceptions import general_handler
 from python_nemesis.exceptions import NemesisException
 from python_nemesis.exceptions import NotFoundException
@@ -56,7 +59,8 @@ def lookup_hash(req_hash):
         raise NotFoundException("Unable to find file with hash %s." % req_hash)
 
     elif len(result) == 1:
-        add_request(req_hash, 'found', file_id=result[0]['file_id'])
+        file = get_file_by_sha512_hash(req_hash)
+        add_request(req_hash, 'found', file_id=file.file_id)
 
     else:
         add_request(req_hash, 'multiple_found')
@@ -68,7 +72,12 @@ def lookup_hash(req_hash):
 def post_file():
     file_uuid = secure_filename(str(uuid.uuid4()))
     filename = '/tmp/%s' % file_uuid
-    file = request.files['file']
+
+    try:
+        file = request.files['file']
+    except Exception:
+        raise BadRequestException("Not a valid multipart upload form with "
+                                  "key named file.")
 
     if 'Content-Range' in request.headers:
         # Extract starting byte from Content-Range header string.
@@ -87,7 +96,8 @@ def post_file():
     # Generate hash of file, and create new, or renew existing db row.
     file_hashes = get_all_hashes(filename)
     file_size = os.path.getsize(filename)
-    file = create_or_renew_by_hash(file_hashes, file_size)
+    file_type = magic.from_file(filename, mime=True)
+    file = create_or_renew_by_hash(file_hashes, file_size, file_type)
     file_id = file.file_id
     file_dict = file.to_dict()
 
