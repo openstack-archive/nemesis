@@ -36,8 +36,8 @@ class Files(db.Model):
                 "size": self.size,
                 "mime_type": self.mime_type,
                 "status": self.status,
-                "last_updated": self.last_updated,
-                "first_seen": self.first_seen}
+                "last_updated": self.last_updated.isoformat(),
+                "first_seen": self.first_seen.isoformat()}
 
 
 class FileLookupRequest(db.Model):
