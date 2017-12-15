@@ -59,7 +59,7 @@ def lookup_hash(req_hash):
         raise NotFoundException("Unable to find file with hash %s." % req_hash)
 
     elif len(result) == 1:
-        file = get_file_by_sha512_hash(req_hash)
+        file = get_file_by_sha512_hash(result[0]['sha512'])
         add_request(req_hash, 'found', file_id=file.file_id)
 
     else:
