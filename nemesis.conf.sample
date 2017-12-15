@@ -1,6 +1,7 @@
 [DEFAULT]
 rpc_backend = rabbit
 transport_url = rabbit://<user>:<password>@<host>/<vhost>
+analysis_plugins = 
 
 [keystone_authtoken]
 identity_uri =
