@@ -11,11 +11,12 @@
 # under the License.
 
 from oslo_config import cfg
+from oslo_config import types
 
 
 DEFAULT_OPT_GRP = cfg.OptGroup(name='DEFAULT')
 DEFAULT_OPTS = [
-    cfg.StrOpt('test_value', default="this is a value")
+    cfg.ListOpt('analysis_plugins', item_type=types.String()),
 ]
 
 SQLALCHEMY_OPT_GRP = cfg.OptGroup(name='sqlalchemy')
