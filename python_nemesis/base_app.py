@@ -78,7 +78,7 @@ def configure_notifier(app):
                                                      topics=topics)
 
 
-def create_app(app_name=None, blueprints=None):
+def create_app(app_name=None):
     """Create the flask app.
 
     This function is intended to be used with the app factory
@@ -91,19 +91,4 @@ def create_app(app_name=None, blueprints=None):
     :rtype: :py:class:`flask.Flask`
     """
     app = Flask(app_name)
-
-    configure_app(app)
-    configure_extensions(app)
-    configure_notifier(app)
-
-    # Here we register the application blueprints.
-    from python_nemesis.api.v1 import V1_API
-    blueprints = [V1_API]
-    configure_blueprints(app, blueprints)
-
     return app
-
-
-if __name__ == "__main__":  # pragma: no cover
-    app = create_app('nemesis-api')
-    app.run(threaded=True)
