@@ -21,7 +21,7 @@ class Files(db.Model):
     sha1_hash = db.Column(db.UnicodeText(), nullable=True, index=True)
     md5_hash = db.Column(db.UnicodeText(), nullable=True, index=True)
     size = db.Column(db.Float(), nullable=True)
-    mime_type = db.Column(db.String(40), nullable=True)
+    mime_type = db.Column(db.String(120), nullable=True)
     submitted_by = db.Column(db.String(120), nullable=False, index=True)
     status = db.Column(db.String(20), nullable=False)
     last_updated = db.Column(db.DateTime, nullable=False)
@@ -36,8 +36,8 @@ class Files(db.Model):
                 "size": self.size,
                 "mime_type": self.mime_type,
                 "status": self.status,
-                "last_updated": self.last_updated,
-                "first_seen": self.first_seen}
+                "last_updated": self.last_updated.isoformat(),
+                "first_seen": self.first_seen.isoformat()}
 
 
 class FileLookupRequest(db.Model):
