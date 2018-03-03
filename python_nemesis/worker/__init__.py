@@ -14,6 +14,8 @@
 
 from flask import current_app
 import oslo_messaging
+from python_nemesis.extensions import log
+from python_nemesis.swift import download_from_swift
 
 
 class NewFileEndpoint(object):
@@ -21,7 +23,13 @@ class NewFileEndpoint(object):
         event_type='nemsis.new_file')
 
     def info(self, ctxt, publisher_id, event_type, payload, metadata):
-        print(payload)
+        file_uuid = payload['file_uuid']
+        file_id = payload['file_id']
+        log.logger.info("Fetched file_id %s to work on from the queue."
+                        % file_id)
+
+        log.logger.info("Downloading file from Swift for analysis.")
+        download_from_swift(file_uuid)
 
 
 def run_worker():
@@ -39,7 +47,6 @@ def run_worker():
     server = oslo_messaging.get_notification_listener(transport,
                                                       targets,
                                                       endpoints,
-                                                      executor='threading',
                                                       pool=pool)
 
     server.start()

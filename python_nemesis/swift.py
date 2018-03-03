@@ -30,3 +30,16 @@ def upload_to_swift(filename, file_id):
         container = config.swift.container.encode('utf-8')
         file_id = str(file_id).encode('utf-8')
         swift_session.put_object(container, file_id, upload_file)
+
+
+def download_from_swift(file_uuid):
+    config = current_app.config['cfg']
+    auth_version = config.swift.auth_version
+    swift_session = swiftclient.Connection(authurl=config.swift.auth_uri,
+                                           user=config.swift.user,
+                                           key=config.swift.password,
+                                           tenant_name=config.swift.project,
+                                           auth_version=auth_version)
+
+    container = config.swift.container.encode('utf-8')
+    print(swift_session.get_object(container, file_uuid))
