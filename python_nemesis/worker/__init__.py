@@ -12,13 +12,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
 from oslo_config.cfg import CONF
 import oslo_messaging
 from python_nemesis.db.utilities import update_status_by_file_id
 from python_nemesis.extensions import log
 from python_nemesis.swift import delete_from_swift
 from python_nemesis.swift import download_from_swift
+from python_nemesis.swift import upload_raw_content
 from python_nemesis.worker_app import create_worker_app
+from python_nemesis.worker.loader import load_class
 
 
 class NewFileEndpoint(object):
@@ -39,7 +42,23 @@ class NewFileEndpoint(object):
             log.logger.info("Fetched file to /tmp/%s" % file_uuid)
 
             log.logger.info("Running analysis plugins.")
-            log.logger.info("Updating file analysis ")
+            for plugin in CONF.analysis_plugins:
+                log.logger.info("Loading %s analysis plugin." % plugin)
+                plugin_class = load_class('%s.NemesisPlugin' % plugin)
+                plugin_obj = plugin_class(payload)
+                plugin_result = plugin_obj.analyse()
+
+                try:
+                    json_result = json.dumps(plugin_result)
+                except:
+                    msg = "Failed to parse results from %s plugin." % plugin
+                    json_result = json.dumps({"success": False,
+                                              "message": msg})
+
+                obj_name = '%s_%s' % (file_id, plugin)
+                upload_raw_content('artifacts', obj_name, json_result)
+
+                log.logger.info("Plugin returned %s result." % plugin_result)
 
             log.logger.info("Cleaning up analysis subject.")
             delete_from_swift('incoming_files', file_uuid)
