@@ -15,6 +15,7 @@
 from flask import Blueprint
 from flask import jsonify
 from flask import request
+import json
 import magic
 import os
 from oslo_config.cfg import CONF
@@ -29,7 +30,9 @@ from python_nemesis.exceptions import NotFoundException
 from python_nemesis.extensions import log
 from python_nemesis.file_hasher import get_all_hashes
 from python_nemesis.notifications import submit_worker_notification
+from python_nemesis.swift import download_raw_content
 from python_nemesis.swift import upload_to_swift
+from swiftclient.exceptions import ClientException
 import uuid
 from werkzeug.utils import secure_filename
 
@@ -47,10 +50,23 @@ def api_definition():
     return ""
 
 
+def get_artifacts(file_id):
+    artifacts = {}
+    for plugin in CONF.analysis_plugins:
+        try:
+            artifact_name = "%s_%s" % (file_id, plugin)
+            artifact = download_raw_content('artifacts', artifact_name)
+            artifacts[plugin] = json.loads(artifact[1])
+        except ClientException:
+            artifacts[plugin] = None
+    return artifacts
+
+
 @V1_API.route('/v1/file/<string:req_hash>')
 def lookup_hash(req_hash):
     try:
         result = search_by_hash(req_hash)
+
     except Exception as err:
         log.logger.error(str(err))
         raise NemesisException(str(err))
@@ -65,6 +81,12 @@ def lookup_hash(req_hash):
 
     else:
         add_request(req_hash, 'multiple_found')
+
+    for curr_result in result:
+        if curr_result['status'] == 'complete':
+            file = get_file_by_sha512_hash(curr_result['sha512'])
+            artifacts = get_artifacts(file.file_id)
+            curr_result['artifacts'] = artifacts
 
     return jsonify(result)
 
@@ -108,7 +130,12 @@ def post_file():
     os.remove(filename)
 
     # Send message to worker queue with file details.
-    worker_msg = {"file_uuid": file_uuid, "file_id": file_id}
+    worker_msg = {"file_uuid": file_uuid,
+                  "file_id": file_id,
+                  "file_size": file_size,
+                  "file_type": file_type,
+                  "file_hashes": file_hashes}
+
     submit_worker_notification(worker_msg)
 
     return jsonify(file_dict)

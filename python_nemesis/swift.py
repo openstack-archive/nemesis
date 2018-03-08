@@ -27,6 +27,17 @@ def get_swift_session():
     return swift_session
 
 
+def upload_raw_content(container, object_name, content):
+    swift_session = get_swift_session()
+    swift_session.put_object(container, object_name, content)
+
+
+def download_raw_content(container, object_name):
+    swift_session = get_swift_session()
+    obj = swift_session.get_object(container, object_name)
+    return obj
+
+
 def upload_to_swift(container, filename, file_id):
     swift_session = get_swift_session()
     with open(os.path.join(filename), 'rb') as upload_file:
