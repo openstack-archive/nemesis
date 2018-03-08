@@ -91,3 +91,24 @@ def create_or_renew_by_hash(hashes, file_size, file_type=None):
                                file_type,
                                current_user.user_id)
         return file
+
+
+def get_file_by_id(file_id):
+    try:
+        result = db.session.query(Files). \
+            filter(Files.file_id == file_id).one()
+    except NoResultFound:
+        result = None
+
+    return result
+
+
+def update_status_by_file_id(file_id, new_status):
+    update_file = get_file_by_id(file_id)
+
+    if update_file:
+        update_file.status = new_status
+        db.session.commit()
+        return True
+    else:
+        return False

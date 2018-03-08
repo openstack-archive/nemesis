@@ -17,6 +17,7 @@ from flask import jsonify
 from flask import request
 import magic
 import os
+from oslo_config.cfg import CONF
 from python_nemesis.db.utilities import add_request
 from python_nemesis.db.utilities import create_or_renew_by_hash
 from python_nemesis.db.utilities import get_file_by_sha512_hash
@@ -102,7 +103,8 @@ def post_file():
     file_dict = file.to_dict()
 
     # Upload to swift and remove the local temp file.
-    upload_to_swift(filename, file_uuid)
+    container = CONF.swift.container.encode('utf-8')
+    upload_to_swift(container, filename, file_uuid)
     os.remove(filename)
 
     # Send message to worker queue with file details.
