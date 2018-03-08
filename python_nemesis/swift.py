@@ -12,34 +12,34 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from flask import current_app
+from oslo_config.cfg import CONF
 import os
 import swiftclient.client as swiftclient
 
 
 def upload_to_swift(filename, file_id):
-    config = current_app.config['cfg']
-    auth_version = config.swift.auth_version
-    swift_session = swiftclient.Connection(authurl=config.swift.auth_uri,
-                                           user=config.swift.user,
-                                           key=config.swift.password,
-                                           tenant_name=config.swift.project,
+    auth_version = CONF.swift.auth_version
+    swift_session = swiftclient.Connection(authurl=CONF.swift.auth_uri,
+                                           user=CONF.swift.user,
+                                           key=CONF.swift.password,
+                                           tenant_name=CONF.swift.project,
                                            auth_version=auth_version)
 
     with open(os.path.join(filename), 'rb') as upload_file:
-        container = config.swift.container.encode('utf-8')
+        container = CONF.swift.container.encode('utf-8')
         file_id = str(file_id).encode('utf-8')
         swift_session.put_object(container, file_id, upload_file)
 
 
 def download_from_swift(file_uuid):
-    config = current_app.config['cfg']
-    auth_version = config.swift.auth_version
-    swift_session = swiftclient.Connection(authurl=config.swift.auth_uri,
-                                           user=config.swift.user,
-                                           key=config.swift.password,
-                                           tenant_name=config.swift.project,
+    auth_version = CONF.swift.auth_version
+    swift_session = swiftclient.Connection(authurl=CONF.swift.auth_uri,
+                                           user=CONF.swift.user,
+                                           key=CONF.swift.password,
+                                           tenant_name=CONF.swift.project,
                                            auth_version=auth_version)
 
-    container = config.swift.container.encode('utf-8')
-    print(swift_session.get_object(container, file_uuid))
+    container = CONF.swift.container.encode('utf-8')
+    obj = swift_session.get_object(container, file_uuid)
+    with open('/tmp/%s' % file_uuid, 'wb') as download_file:
+        download_file.write(obj[1])

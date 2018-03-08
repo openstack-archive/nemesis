@@ -12,10 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from flask import current_app
 import oslo_messaging
+from oslo_config.cfg import CONF
+from python_nemesis.db.utilities import update_status_by_file_id
 from python_nemesis.extensions import log
 from python_nemesis.swift import download_from_swift
+from python_nemesis.worker_app import create_worker_app
 
 
 class NewFileEndpoint(object):
@@ -23,18 +25,25 @@ class NewFileEndpoint(object):
         event_type='nemsis.new_file')
 
     def info(self, ctxt, publisher_id, event_type, payload, metadata):
-        file_uuid = payload['file_uuid']
-        file_id = payload['file_id']
-        log.logger.info("Fetched file_id %s to work on from the queue."
-                        % file_id)
+        with create_worker_app().app_context():
+            file_uuid = payload['file_uuid']
+            file_id = payload['file_id']
+            log.logger.info("Fetched file_id %s to work on from the queue."
+                            % file_id)
 
-        log.logger.info("Downloading file from Swift for analysis.")
-        download_from_swift(file_uuid)
+            log.logger.info("Downloading file from Swift for analysis.")
+            download_from_swift(file_uuid)
+            log.logger.info("Fetched file to /tmp/%s" % file_uuid)
+
+            log.logger.info("Running analysis plugins.")
+            log.logger.info("Updating file analysis ")
+            
+            log.logger.info("Setting file status to complete.")
+            update_status_by_file_id(file_id, 'complete')
 
 
 def run_worker():
-    cfg = current_app.config['cfg']
-    transport = oslo_messaging.get_notification_transport(cfg)
+    transport = oslo_messaging.get_notification_transport(CONF)
 
     targets = [
         oslo_messaging.Target(topic='nemesis_notifications')
@@ -47,6 +56,7 @@ def run_worker():
     server = oslo_messaging.get_notification_listener(transport,
                                                       targets,
                                                       endpoints,
+                                                      executor='threading',
                                                       pool=pool)
 
     server.start()

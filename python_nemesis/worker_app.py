@@ -13,7 +13,6 @@
 from python_nemesis.base_app import configure_app
 from python_nemesis.base_app import configure_extensions
 from python_nemesis.base_app import create_app
-from python_nemesis.worker import run_worker
 
 
 def create_worker_app():
@@ -24,6 +23,7 @@ def create_worker_app():
 
 
 if __name__ == "__main__":  # pragma: no cover
+    from python_nemesis.worker import run_worker
     app = create_worker_app()
     with app.app_context():
         run_worker()
