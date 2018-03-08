@@ -14,6 +14,7 @@
 
 
 class NemesisPlugin(object):
+    plugin_name = 'null_plugin'
 
     def __init__(self, file_path):
         self.file_path = file_path
