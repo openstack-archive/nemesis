@@ -43,5 +43,8 @@ class NemesisPlugin(object):
 
         ret_tags = {}
         for k, v in tags.items():
-            ret_tags[k] = v.printable
+            try:
+                ret_tags[k] = v.printable
+            except AttributeError:
+                ret_tags[k] = str(v)
         return ret_tags
