@@ -56,7 +56,7 @@ def get_artifacts(file_id):
         try:
             artifact_name = "%s_%s" % (file_id, plugin)
             artifact = download_raw_content('artifacts', artifact_name)
-            artifacts[plugin] = json.loads(artifact[1])
+            artifacts[plugin] = json.loads(artifact[1].decode('utf-8'))
         except ClientException:
             artifacts[plugin] = None
     return artifacts
