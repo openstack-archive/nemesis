@@ -2,11 +2,10 @@
 Installation
 ============
 
-At the command line::
+API Nodes
+---------
 
-    $ pip install nemesis
 
-Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv nemesis
-    $ pip install nemesis
+Worker Nodes
+------------

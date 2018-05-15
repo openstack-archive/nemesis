@@ -1,6 +1,6 @@
-========
-Usage
-========
+==================
+Raw API Usage
+==================
 
 To use nemesis in a project::
 
