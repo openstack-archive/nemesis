@@ -2,15 +2,15 @@
 # of appearance. Changing the order has an impact on the overall integration
 # process, which may cause wedges in the gate later.
 
-pbr!=2.1.0,>=2.0.0 # Apache-2.0
-alembic>=0.8.10 # MIT
-Flask!=0.11,<1.0,>=0.10 # BSD
-Flask-SQLAlchemy>=2.0 # BSD
+pbr!=2.1.0,>=3.1.1 # Apache-2.0
+alembic>=0.9.8 # MIT
+Flask!=0.11,<1.0,>=0.12.2 # BSD
+Flask-SQLAlchemy>=2.3.2 # BSD
 flask-oslolog>=0.1 # Apache-2.0
 flask-keystone>=0.2 # Apache-2.0
 oslo.config>=5.2.0 # Apache-2.0
 oslo.messaging>=5.29.0 # Apache-2.0
 oslo.log>=3.36.0 # Apache-2.0
-python-swiftclient>=3.2.0 # Apache-2.0
-keystonemiddleware>=4.17.0 # Apache-2.0
-python-magic>=0.4.13 # MIT
+python-swiftclient>=3.5.0 # Apache-2.0
+keystonemiddleware>=4.21.0 # Apache-2.0
+python-magic>=0.4.15 # MIT
