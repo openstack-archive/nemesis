@@ -13,6 +13,7 @@ Contents:
 
    about 
    installation
+   docker_env
    usage
    plugins
    contributing
